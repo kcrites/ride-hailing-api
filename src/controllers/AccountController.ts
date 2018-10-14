@@ -188,6 +188,12 @@ export default class AccountController {
     const user = request.user;
     if (user && user.id) {
       const driver = await findById(request.user.id);
+
+      // remove password and private key from response
+      delete driver.password;
+      delete driver.davId;
+      delete driver.privateKey;
+
       response.send(200, {
         account: driver,
       });
