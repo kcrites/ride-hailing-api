@@ -26,7 +26,7 @@ class BidsHandler {
     }
 
     private announceToDriver(driver: IDriver, commitmentRequest: CommitmentRequest) {
-        console.log('ToDo');
+        return 'ToDo';
     }
 
     private async handleBids(driverId: string) {
