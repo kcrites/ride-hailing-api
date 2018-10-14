@@ -167,10 +167,10 @@ export default class AccountController {
   }
 
   public async updateVehicleDetails(request: IRequestWithAuthentication, response: Response) {
-    const personalDetails: IVehicleDetails = request.body;
+    const vehicleDetails: IVehicleDetails = request.body;
     if (request.user) {
       try {
-        await updateVehicleDetails(personalDetails);
+        await updateVehicleDetails(vehicleDetails);
         response.send(200, {
           message: `Updated driver details`,
         });
@@ -188,6 +188,12 @@ export default class AccountController {
     const user = request.user;
     if (user && user.id) {
       const driver = await findById(request.user.id);
+
+      // remove password and private key from response
+      delete driver.password;
+      delete driver.davId;
+      delete driver.privateKey;
+
       response.send(200, {
         account: driver,
       });

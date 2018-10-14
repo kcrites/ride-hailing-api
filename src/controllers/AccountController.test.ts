@@ -1,5 +1,7 @@
 import { Request, Response } from 'restify';
-import { IDriver } from '../cassandra/drivers';
+import { IDriver, IPersonalDetails } from '../cassandra/drivers';
+import { v4 as uuid} from 'uuid';
+import { IRequestWithAuthentication } from '../lib/auth';
 
 describe('AccountController class', () => {
   describe('authenticateDriver method', () => {
@@ -97,6 +99,88 @@ describe('AccountController class', () => {
       expect(cassandra.findByEmail).toHaveBeenCalledWith(email);
       expect(authMock.generateSignedToken).toHaveBeenCalledTimes(0);
       expect(responseMockInstance.send).toBeCalledWith(200, {userAuthenticated: false});
+    });
+  });
+
+  describe('driverdetails methods', () => {
+    const user = {
+      id: uuid(),
+    };
+
+    beforeEach(() => {
+      jest.resetAllMocks();
+      jest.resetModules();
+    });
+
+    it('should return account for logged in user', async () => {
+      const cassandra = require('../cassandra/drivers');
+      cassandra.findById = jest.fn((id: string) => driver);
+      const accountController = (await import('./AccountController')).default;
+      const driver: IDriver = {id: 'id', firstName: 'asdasd'};
+      const requestMock = jest.fn<IRequestWithAuthentication>(() => ({
+        body: { },
+        user,
+      }));
+      const requestMockInstance = new requestMock();
+      const responseMock = jest.fn<Response>(() => ({
+        send: jest.fn(() => ''),
+      }));
+      const responseMockInstance = new responseMock();
+      const accountControllerInstance = new accountController();
+
+      await accountControllerInstance.getCurrentlyLoggedIn(requestMockInstance, responseMockInstance);
+
+      expect(cassandra.findById).toHaveBeenCalledWith(user.id);
+      expect(responseMockInstance.send).toBeCalledWith(200, { account: driver });
+    });
+
+    it('should return unauthorized for not logged in user', async () => {
+      const cassandra = require('../cassandra/drivers');
+      cassandra.findById = jest.fn((id: string) => new Object());
+      const accountController = (await import('./AccountController')).default;
+      const requestMock = jest.fn<IRequestWithAuthentication>(() => ({
+        body: { },
+      }));
+      const requestMockInstance = new requestMock();
+      const responseMock = jest.fn<Response>(() => ({
+        send: jest.fn(() => ''),
+      }));
+      const responseMockInstance = new responseMock();
+      const accountControllerInstance = new accountController();
+
+      await accountControllerInstance.getCurrentlyLoggedIn(requestMockInstance, responseMockInstance);
+      expect(cassandra.findById).toHaveBeenCalledTimes(0);
+      expect(responseMockInstance.send).toBeCalledWith(401, 'User id is not set');
+    });
+
+    it('should update driver details ', async () => {
+      const cassandra = require('../cassandra/drivers');
+      cassandra.updatePersonalDetails = jest.fn((pd: IPersonalDetails) => personalDetails);
+      const accountController = (await import('./AccountController')).default;
+      const personalDetails: IPersonalDetails = {
+        id: user.id,
+        firstName: 'asdasd',
+        lastName: 'dcvdcv',
+        email: 'a@b.c',
+        city: 'NYC',
+        profileImageUrl: 'img1',
+        licenseImageUrl: 'img2',
+      };
+      const requestMock = jest.fn<IRequestWithAuthentication>(() => ({
+        body: { ...personalDetails },
+        user,
+      }));
+      const requestMockInstance = new requestMock();
+      const responseMock = jest.fn<Response>(() => ({
+        send: jest.fn(() => ''),
+      }));
+      const responseMockInstance = new responseMock();
+      const accountControllerInstance = new accountController();
+
+      await accountControllerInstance.updatePersonalDetails(requestMockInstance, responseMockInstance);
+
+      expect(cassandra.updatePersonalDetails).toHaveBeenCalledWith(personalDetails);
+      expect(responseMockInstance.send).toBeCalledWith(200, {message: 'Updated driver details'});
     });
   });
 
