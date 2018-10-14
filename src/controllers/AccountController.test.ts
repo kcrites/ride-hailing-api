@@ -1,5 +1,5 @@
 import { Request, Response } from 'restify';
-import { IDriver, IPersonalDetails } from '../cassandra/drivers';
+import { IDriver, IPersonalDetails, ICompanyDetails, IVehicleDetails } from '../cassandra/drivers';
 import { v4 as uuid} from 'uuid';
 import { IRequestWithAuthentication } from '../lib/auth';
 
@@ -9,6 +9,100 @@ describe('AccountController class', () => {
     beforeEach(() => {
       jest.resetAllMocks();
       jest.resetModules();
+      jest.clearAllMocks();
+    });
+
+    it('should send valid token when created new account', async () => {
+      const email = 'test@dav.network';
+      const password = 'funindav1234';
+      const ip = '10.0.0.1';
+      const city = 'Vatican';
+      const hashedPassword = '$2b$10$K6BIhI1E6tBtsiWvBlh/zuN.C.2yT5Cu/GCOJHs9419Bm1PefvPyu';
+
+      const driver = {
+        phoneNumber: '+1236479879',
+        profilePhotoId: 'Img1',
+        licensePhotoId: 'Img2',
+        firstName: 'His Holiness Pope Francis',
+        lastName: 'Francis',
+        email,
+        password,
+        companyName: 'Holy church of our lord and saviour Jesus Christ',
+        vatNumber: '12453456',
+        address: 'Apostolic Palace',
+        city,
+        make: 'Ford',
+        model: 'Popemobile',
+        year: '2007',
+        licensePlate: 'SCV 00919',
+        vehicleColor: 'white',
+      };
+
+      const saveDriver: IDriver  = {
+        city,
+        companyAddress: 'Apostolic Palace',
+        companyCity: city,
+        companyName: 'Holy church of our lord and saviour Jesus Christ',
+        createdFrom: ip,
+        davId: null,
+        email: 'test@dav.network',
+        emailConfirmed: false,
+        firstName: 'His Holiness Pope Francis',
+        id: expect.anything(),
+        lastName: 'Francis',
+        licenseImageUrl: 'Img2',
+        password: '$2b$10$K6BIhI1E6tBtsiWvBlh/zuN.C.2yT5Cu/GCOJHs9419Bm1PefvPyu',
+        phoneConfirmed: true,
+        phoneNumber: '+1236479879',
+        privateKey: null,
+        profileImageUrl: 'Img1',
+        vatNumber: '12453456',
+        vehicleColor: 'white',
+        vehicleImageUrl: null,
+        vehicleMake: 'Ford',
+        vehicleModel: 'Popemobile',
+        vehiclePlateNumber: 'SCV 00919',
+        vehicleYear: 2007,
+      };
+
+      const authMock = {
+        generateSignedToken: jest.fn((driverParam: IDriver) => token),
+      };
+      jest.doMock('../lib/auth', () => authMock);
+      const cassandraMock = {
+        insert: jest.fn(d => driver),
+      };
+      jest.doMock('../cassandra/drivers', () => cassandraMock);
+
+      jest.doMock('bcrypt', () => ({
+        hash: jest.fn((data, salt, cb) => cb(null, hashedPassword)),
+      }));
+
+      const accountController = (await import('./AccountController')).default;
+      const token = 'token';
+      const requestMock = jest.fn<Request>(() => ({
+        body: driver,
+        connection: {
+          remoteAddress: ip,
+        },
+      }));
+      const requestMockInstance = new requestMock();
+      const responseMock = jest.fn<Response>(() => ({
+        send: jest.fn(() => ''),
+      }));
+      const responseMockInstance = new responseMock();
+      const accountControllerInstance = new accountController();
+
+      await accountControllerInstance.insertDriver(requestMockInstance, responseMockInstance);
+
+      expect(cassandraMock.insert).toHaveBeenCalledWith(saveDriver);
+      expect(cassandraMock.insert).toHaveBeenCalledTimes(1);
+      expect(authMock.generateSignedToken).toHaveBeenCalledTimes(1);
+      expect(authMock.generateSignedToken).toHaveBeenCalledWith(saveDriver);
+      expect(responseMockInstance.send).toBeCalledWith(200, {
+        message: 'Registered driver details',
+        token,
+      });
     });
 
     it('should send valid token when get valid params', async () => {
@@ -21,6 +115,10 @@ describe('AccountController class', () => {
         generateSignedToken: jest.fn((driverParam: IDriver) => token),
       };
       jest.doMock('../lib/auth', () => authMock);
+      jest.doMock('bcrypt', () => ({
+        // hash: jest.fn((data, salt, cb) => Promise.resolve(hashedPassword)),
+        compare: jest.fn((receivedPass, savedPass) => Promise.resolve(true)),
+      }));
       const accountController = (await import('./AccountController')).default;
       const token = 'token';
       const driver: IDriver = {id: 'id', password: hashedPassword};
@@ -51,6 +149,10 @@ describe('AccountController class', () => {
         generateSignedToken: jest.fn((driverParam: IDriver) => token),
       };
       jest.doMock('../lib/auth', () => authMock);
+      jest.doMock('bcrypt', () => ({
+        // hash: jest.fn((data, salt, cb) => Promise.resolve(hashedPassword)),
+        compare: jest.fn((receivedPass, savedPass) => Promise.resolve(false)),
+      }));
       const accountController = (await import('./AccountController')).default;
       const token = 'token';
       const driver: IDriver = {id: 'id', password: hashedPassword};
@@ -102,7 +204,7 @@ describe('AccountController class', () => {
     });
   });
 
-  describe('driverdetails methods', () => {
+  describe('Driver Details methods', () => {
     const user = {
       id: uuid(),
     };
@@ -181,6 +283,64 @@ describe('AccountController class', () => {
 
       expect(cassandra.updatePersonalDetails).toHaveBeenCalledWith(personalDetails);
       expect(responseMockInstance.send).toBeCalledWith(200, {message: 'Updated driver details'});
+    });
+
+    it('should update company details ', async () => {
+      const companyDetails: ICompanyDetails = {
+        id: user.id,
+        companyName: 'Holy church of our lord and saviour Jesus Christ',
+        vatNumber: '5675648',
+        companyAddress: 'Apostolic Palace',
+        companyCity: 'Vatican',
+      };
+      const cassandra = require('../cassandra/drivers');
+      cassandra.updateCompanyDetails = jest.fn((cd: ICompanyDetails) => companyDetails);
+      const accountController = (await import('./AccountController')).default;
+      const requestMock = jest.fn<IRequestWithAuthentication>(() => ({
+        body: { ...companyDetails },
+        user,
+      }));
+      const requestMockInstance = new requestMock();
+      const responseMock = jest.fn<Response>(() => ({
+        send: jest.fn(() => ''),
+      }));
+      const responseMockInstance = new responseMock();
+      const accountControllerInstance = new accountController();
+
+      await accountControllerInstance.updateCompanyDetails(requestMockInstance, responseMockInstance);
+
+      expect(cassandra.updateCompanyDetails).toHaveBeenCalledWith(companyDetails);
+      expect(responseMockInstance.send).toBeCalledWith(200, {message: 'Updated company details'});
+    });
+
+    it('should update vehicle details ', async () => {
+      const vehicleDetails: IVehicleDetails = {
+        id: user.id,
+        vehicleMake: 'Ford',
+        vehicleModel: 'Popemobile',
+        vehicleYear: 2007,
+        vehiclePlateNumber: 'SCV 00919',
+        vehicleColor: 'white',
+        vehicleImageUrl: 'SomeVehImage',
+      };
+      const cassandra = require('../cassandra/drivers');
+      cassandra.updateVehicleDetails = jest.fn((cd: IVehicleDetails) => vehicleDetails);
+      const accountController = (await import('./AccountController')).default;
+      const requestMock = jest.fn<IRequestWithAuthentication>(() => ({
+        body: { ...vehicleDetails },
+        user,
+      }));
+      const requestMockInstance = new requestMock();
+      const responseMock = jest.fn<Response>(() => ({
+        send: jest.fn(() => ''),
+      }));
+      const responseMockInstance = new responseMock();
+      const accountControllerInstance = new accountController();
+
+      await accountControllerInstance.updateVehicleDetails(requestMockInstance, responseMockInstance);
+
+      expect(cassandra.updateVehicleDetails).toHaveBeenCalledWith(vehicleDetails);
+      expect(responseMockInstance.send).toBeCalledWith(200, {message: 'Updated vehicle details'});
     });
   });
 

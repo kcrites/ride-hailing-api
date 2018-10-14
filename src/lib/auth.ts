@@ -1,6 +1,6 @@
 import * as passport from 'passport';
 import { Strategy as LocalStrategy} from 'passport-local';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 
@@ -39,7 +39,7 @@ export function generateSignedToken(driver: Drivers.IDriver) {
   return jwt.sign(payload, jwtOptions.secretOrKey);
 }
 
-passport.use('jwt', new JwtStrategy(jwtOptions, (jwtPayload, done) => {
+export function authenticateCallback(jwtPayload: any, done: VerifiedCallback) {
   try {
     // const driver = Drivers.findById(jwtPayload.id);
     if (jwtPayload.id) {
@@ -51,4 +51,6 @@ passport.use('jwt', new JwtStrategy(jwtOptions, (jwtPayload, done) => {
   } catch (err) {
     return done(err);
   }
-}));
+}
+
+passport.use('jwt', new JwtStrategy(jwtOptions, authenticateCallback));

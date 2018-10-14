@@ -21,7 +21,7 @@ const passwordResetSourceEmail = 'test@dav.network';
 const passwordResetSubject = 'Mooving password reset';
 const appAddress = process.env.appAddress || 'localhost:3000';
 
-interface IDriverDetails {
+export interface IDriverDetails {
   phoneNumber: string;
   profilePhotoId: string;
   licensePhotoId: string;
@@ -124,6 +124,7 @@ export default class AccountController {
         token,
       });
     } catch (err) {
+      console.log(err);
       response.send(500, {
         message: `Failed to register driver details`,
       });
@@ -154,11 +155,11 @@ export default class AccountController {
       try {
         await updateCompanyDetails(personalDetails);
         response.send(200, {
-          message: `Updated driver details`,
+          message: `Updated company details`,
         });
       } catch (err) {
         response.send(500, {
-          message: `Failed to update driver details`,
+          message: `Failed to update company details`,
         });
       }
     } else {
@@ -172,11 +173,11 @@ export default class AccountController {
       try {
         await updateVehicleDetails(vehicleDetails);
         response.send(200, {
-          message: `Updated driver details`,
+          message: `Updated vehicle details`,
         });
       } catch (err) {
         response.send(500, {
-          message: `Failed to update driver details`,
+          message: `Failed to update vehicle details`,
         });
       }
     } else {
