@@ -4,6 +4,7 @@ import StatsController from './controllers/StatsController';
 import RegistrationController from './controllers/RegistrationController';
 import * as passport from 'passport';
 import AccountController from './controllers/AccountController';
+import RidesController from './controllers/RidesController';
 
 export default class Api {
 
@@ -18,6 +19,7 @@ export default class Api {
     const statsController = new StatsController();
     const registrationController = new RegistrationController();
     const accountController = new AccountController();
+    const ridesController = new RidesController();
 
     const cors = corsMiddleware({
       origins: ['*'],
@@ -56,5 +58,20 @@ export default class Api {
     this.server.get('/account', passport.authenticate('jwt', { session: false }), accountController.getCurrentlyLoggedIn);
     this.server.post('/driver-sign-in', accountController.authenticateDriver);
     this.server.post('/reset-password', accountController.sendPasswordResetEmail);
+    this.server.get('/commit-to-ride',
+      // passport.authenticate('jwt', { session: false }),
+      ridesController.commitRide);
+    this.server.get('/decline-ride',
+      // passport.authenticate('jwt', { session: false }),
+      ridesController.declineRide);
+    this.server.get('/register-for-needs',
+      // passport.authenticate('jwt', { session: false }),
+      ridesController.registerForNeeds);
+    this.server.get('/unregister-for-needs',
+      // passport.authenticate('jwt', { session: false }),
+      ridesController.unregisterForNeeds);
+    this.server.get('/rides',
+      // passport.authenticate('jwt', { session: false }),
+      ridesController.rides);
   }
 }
