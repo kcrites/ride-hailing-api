@@ -28,4 +28,6 @@ module.exports = [
   'html',
   'mailgun',
   'app',
+  'cb',
+  'ip',
 ];

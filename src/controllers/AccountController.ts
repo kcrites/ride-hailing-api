@@ -124,7 +124,6 @@ export default class AccountController {
         token,
       });
     } catch (err) {
-      console.log(err);
       response.send(500, {
         message: `Failed to register driver details`,
       });
