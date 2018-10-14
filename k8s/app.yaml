@@ -1,0 +1,15 @@
+apiVersion: 0.3.0
+environments:
+  dev:
+    destination:
+      namespace: ride-hailing
+      server: https://192.168.39.179:8443
+    k8sVersion: v1.10.0
+    path: dev
+kind: ksonnet.io/app
+name: api
+registries:
+  incubator:
+    protocol: github
+    uri: github.com/ksonnet/parts/tree/master/incubator
+version: 0.0.1
