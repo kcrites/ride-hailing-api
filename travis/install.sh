@@ -21,4 +21,5 @@ tar xzf ~/tmp/ks.tar.gz -C ~/tmp/ks --strip-components=1
 sudo cp ~/tmp/ks/ks /usr/local/bin
 rm -rf ~/tmp/ks ~/tmp/ks.tar.gz
 
+cat ~/.kube/config
 kubectl version
