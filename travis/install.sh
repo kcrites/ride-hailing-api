@@ -21,3 +21,5 @@ curl -L -o ~/tmp/ks.tar.gz https://github.com/ksonnet/ksonnet/releases/download/
 tar xzf ~/tmp/ks.tar.gz -C ~/tmp/ks --strip-components=1
 sudo cp ~/tmp/ks/ks /usr/local/bin
 rm -rf ~/tmp/ks ~/tmp/ks.tar.gz
+
+kubesctl version
