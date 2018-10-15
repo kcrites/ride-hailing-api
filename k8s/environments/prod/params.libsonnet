@@ -8,14 +8,14 @@ local envParams = params {
     //   replicas: params.global.replicas,
     // },
     'api-deployment'+: {
-      replicas: 1,
+      replicas: 3,
       limits: {
-        cpu: '100m',
-        memory: '0.1Gi',
+        cpu: '500m',
+        memory: '1Gi',
       },
       requests: {
         cpu: '100m',
-        memory: '0.1Gi',
+        memory: '0.5Gi',
       },
     },
   },

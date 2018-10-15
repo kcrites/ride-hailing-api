@@ -37,6 +37,16 @@ local version = std.extVar('IMAGE_VERSION');
                 containerPort: 3005,
               },
             ],
+            resources: {
+              limits: {
+                cpu: params.limits.cpu,
+                memory: params.limits.memory,
+              },
+              requests: {
+                cpu: params.requests.cpu,
+                memory: params.requests.memory,
+              },
+            },
           },
         ],
       },
