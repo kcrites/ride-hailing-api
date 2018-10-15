@@ -20,6 +20,7 @@ script:
 after_success:
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - cd travis && ./install.sh && cd ..
+- cd k8s && npm i && cd ..
 - cd k8s && make build && cd ..
 - cd k8s && make deploy-prod && cd ..
 notifications:
