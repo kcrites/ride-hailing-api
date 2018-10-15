@@ -3,9 +3,7 @@ services:
   - docker
 language: node_js
 node_js:
-- '8'
 - '9'
-- '10'
 branches:
   only:
   - master
@@ -21,7 +19,9 @@ script:
 - npm run tsc
 after_success:
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- cd travis && install.sh
 - cd k8s && make build
+- cd k8s && make deploy-prod
 notifications:
   email:
     on_success: change # default: change
