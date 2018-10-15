@@ -9,6 +9,13 @@ curl -o config https://$GITHUB_ACCESS_TOKEN@raw.githubusercontent.com/GithubOrga
 mkdir ${HOME}/.kube
 cp ./config ${HOME}/.kube/config
 
+# Install ksonnet
+curl -L -o ~/tmp/ks.tar.gz https://github.com/ksonnet/ksonnet/releases/download/v0.13.0/ks_0.13.0_linux_amd64.tar.gz
+mkdir ~/tmp/ks
+tar xzf ~/tmp/ks.tar.gz -C ~/tmp/ks --strip-components=1
+sudo cp ~/tmp/ks/ks /usr/local/bin
+rm -rf ~/tmp/ks ~/tmp/ks.tar.gz
+
 # Fill out missing params in kubectl config file
 kubectl config set clusters.kubernetes-kube-group-dav.server "$KUBE_CLUSTER_SERVER"
 kubectl config set clusters.kubernetes-kube-group-dav.certificate-authority-data "$KUBE_CLUSTER_CERTIFICATE"

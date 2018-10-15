@@ -19,9 +19,9 @@ script:
 - npm run tsc
 after_success:
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-- cd travis && install.sh
-- cd k8s && make build
-- cd k8s && make deploy-prod
+- cd travis && ./install.sh && cd ..
+- cd k8s && make build && cd ..
+- cd k8s && make deploy-prod && cd ..
 notifications:
   email:
     on_success: change # default: change
