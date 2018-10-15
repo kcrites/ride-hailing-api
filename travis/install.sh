@@ -9,10 +9,10 @@ mkdir ~/.kube
 cp ./config ~/.kube/config
 
 # Fill out missing params in kubectl config file
-kubectl config set clusters.kubernetes-kube-group-dav.server "$KUBE_CLUSTER_SERVER"
-kubectl config set clusters.kubernetes-kube-group-dav.certificate-authority-data "$KUBE_CLUSTER_CERTIFICATE"
-kubectl config set users.kubernetes-kube-group-dav-admin.client-certificate-data "$KUBE_CLIENT_CERTIFICATE"
-kubectl config set users.kubernetes-kube-group-dav-admin.client-key-data "$KUBE_CLIENT_KEY"
+kubectl config set clusters.gke_dav-ride-hailing_us-east1-c_staging.server "$KUBE_CLUSTER_SERVER"
+kubectl config set clusters.gke_dav-ride-hailing_us-east1-c_staging.certificate-authority-data "$KUBE_CLUSTER_CERTIFICATE"
+kubectl config set users.gke_dav-ride-hailing_us-east1-c_staging.client-certificate-data "$KUBE_CLIENT_CERTIFICATE"
+kubectl config set users.gke_dav-ride-hailing_us-east1-c_staging.client-key-data "$KUBE_CLIENT_KEY"
 
 # Install ksonnet
 mkdir -p ~/tmp/ks
