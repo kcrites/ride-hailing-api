@@ -1,6 +1,4 @@
 sudo: required
-services:
-  - docker
 language: node_js
 node_js:
 - '9'
@@ -9,8 +7,15 @@ branches:
   - master
   - staging
   - production
+services:
+  - docker
+cache:
+  directories:
+    - "~/google-cloud-sdk/"
 install:
-- npm install
+  - npm install
+  - cd travis && ./install.sh && cd ..
+  - cd k8s && npm i && cd ..
 before_script:
 - npm run tslint
 - npm run jest
@@ -19,8 +24,6 @@ script:
 - npm run tsc
 after_success:
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-- cd travis && ./install.sh && cd ..
-- cd k8s && npm i && cd ..
 - cd k8s && make build && cd ..
 - cd k8s && make deploy-prod && cd ..
 notifications:
