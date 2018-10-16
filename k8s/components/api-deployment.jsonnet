@@ -31,6 +31,18 @@ local version = std.extVar('IMAGE_VERSION');
                 name: 'CASSANDRA_KEYSPACE',
                 value: 'ride_hailing',
               },
+              {
+                name: 'TWILIO_API_KEY',
+                value: params.TWILIO_API_KEY,
+              },
+              {
+                name: 'MAILGUN_API_KEY',
+                value: params.MAILGUN_API_KEY,
+              },
+              {
+                name: 'MAILGUN_DOMAIN',
+                value: params.MAILGUN_DOMAIN,
+              },
             ],
             ports: [
               {
