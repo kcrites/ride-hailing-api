@@ -12,6 +12,8 @@ services:
 env:
   global:
     - GOOGLE_APPLICATION_CREDENTIALS=~/gcloud-service-key.json
+before_install:
+  - openssl aes-256-cbc -K $encrypted_ffb4e82b5765_key -iv $encrypted_ffb4e82b5765_iv -in travis/dav-ride-hailing-travis-service-account.json.enc -out ~/gcloud-service-key.json -d
 install:
   - cd travis && ./install.sh && cd ..
   - cd k8s && npm i && cd ..
