@@ -20,6 +20,7 @@ local envParams = params {
       TWILIO_API_KEY: 'CNvD1uktQu7wio61sVNLPNaZXP0OBJVa',
       MAILGUN_API_KEY: 'key-099572ee6cd2260a358eeb65b3eeeef8',
       MAILGUN_DOMAIN: 'dav.network',
+      CASSANDRA_ENDPOINTS: 'localhost',
     },
   },
 };

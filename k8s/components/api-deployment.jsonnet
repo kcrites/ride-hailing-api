@@ -28,6 +28,10 @@ local version = std.extVar('IMAGE_VERSION');
             name: 'api',
             env: [
               {
+                name: 'CASSANDRA_ENDPOINTS',
+                value: params.CASSANDRA_ENDPOINTS,
+              },
+               {
                 name: 'CASSANDRA_KEYSPACE',
                 value: 'ride_hailing',
               },
