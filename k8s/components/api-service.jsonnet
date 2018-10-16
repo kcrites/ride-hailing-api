@@ -15,6 +15,7 @@ local params = std.extVar('__ksonnet/params').components['api-service'];
       },
     ],
     selector: { api: 'api' },
-    type: 'NodePort',
+    type: 'LoadBalancer',
+    loadBalancerIP: '35.227.43.29',
   },
 }

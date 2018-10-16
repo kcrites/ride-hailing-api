@@ -28,8 +28,24 @@ local version = std.extVar('IMAGE_VERSION');
             name: 'api',
             env: [
               {
+                name: 'CASSANDRA_ENDPOINTS',
+                value: params.CASSANDRA_ENDPOINTS,
+              },
+               {
                 name: 'CASSANDRA_KEYSPACE',
                 value: 'ride_hailing',
+              },
+              {
+                name: 'TWILIO_API_KEY',
+                value: params.TWILIO_API_KEY,
+              },
+              {
+                name: 'MAILGUN_API_KEY',
+                value: params.MAILGUN_API_KEY,
+              },
+              {
+                name: 'MAILGUN_DOMAIN',
+                value: params.MAILGUN_DOMAIN,
               },
             ],
             ports: [
@@ -37,6 +53,16 @@ local version = std.extVar('IMAGE_VERSION');
                 containerPort: 3005,
               },
             ],
+            resources: {
+              limits: {
+                cpu: params.limits.cpu,
+                memory: params.limits.memory,
+              },
+              requests: {
+                cpu: params.requests.cpu,
+                memory: params.requests.memory,
+              },
+            },
           },
         ],
       },

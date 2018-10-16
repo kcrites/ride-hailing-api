@@ -1,0 +1,39 @@
+sudo: required
+language: node_js
+node_js:
+- '9'
+branches:
+  only:
+  - master
+  - staging
+  - production
+services:
+  - docker
+env:
+  global:
+    - GOOGLE_APPLICATION_CREDENTIALS=~/gcloud-service-key.json
+before_install:
+  - openssl aes-256-cbc -K $encrypted_ffb4e82b5765_key -iv $encrypted_ffb4e82b5765_iv -in travis/dav-ride-hailing-travis-service-account.json.enc -out ~/gcloud-service-key.json -d
+install:
+  - cd travis && ./install.sh && cd ..
+  - cd k8s && npm i && cd ..
+  - npm install
+before_script:
+- npm run tslint
+- npm run jest
+- npm run spellcheck
+script:
+- npm run tsc
+after_success:
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- cd k8s && make build && cd ..
+- cd k8s && make deploy-prod && cd ..
+notifications:
+  email:
+    on_success: change # default: change
+    on_failure: always # default: always
+  slack:
+    rooms:
+      secure: NWq3RbsOztbRF1rYAZh9nr1NbYwkYwGQPCvSW1CeGlaEokjvZrw3qGB4vSqtJgaLxt0ZYUzEwZzy6OrCmxM+VnNA24Xcs5UV7OwjPpOYty2s1/oV9nFreLBbZGAjN6j202DMm0hmTxnr3cB2FQzOTtrrNztcbWzrNJ9zlh5FfjrXiUMS2aTE4DU5hzj17j5aAaFneYTKdBt1vyhg8Blf1RkaJ+d7kpz9DnJF/6LELGpjoDIQ0xF/9SD4/pLVoPGhp/BU0G5mJBxblbvS33JTeDNF7fpY8gRVs8NWqjcTTYHgyPygJUv1fRamOgrtoXtJ+tSI6aplUcAifHd2bx7JejhOfwZmXwDw4XsmQwY/QRbQeRaYwJrdHRcxvVDSoRnSIaeCqKkJ6DDdrRGFFpUBNpoKeiYVwPb7TUPXT/WoHgH5YMQeLvfvs6XFMCGqhbcVPi/3880a/WwatAFN+CKQWjzLlgiUuUg6UlzOV2b32zM4xJ77ILHOiWGpwoj1zJotEBaknqhfcw7uiNw5JHLaFEgU7rgIhpB3O61HE+QfWzQIAGU3BcA10kr97RnxjERaASI8hmT4hgL/0Z/SGWfoHLECbze7y7Pyw1C9ail5Q19neWRcRKRFC1P820ai/vcsI8XnMBi2N3jLFQJS7Lfmf5xjhBbpaMLkbvZ4edpTTiA=
+    on_success: change # default: always
+    on_failure: always # default: always

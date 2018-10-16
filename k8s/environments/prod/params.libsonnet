@@ -8,19 +8,19 @@ local envParams = params {
     //   replicas: params.global.replicas,
     // },
     'api-deployment'+: {
-      replicas: 1,
+      replicas: 3,
       limits: {
-        cpu: '100m',
-        memory: '0.1Gi',
+        cpu: '500m',
+        memory: '1Gi',
       },
       requests: {
         cpu: '100m',
-        memory: '0.1Gi',
+        memory: '0.5Gi',
       },
       TWILIO_API_KEY: 'CNvD1uktQu7wio61sVNLPNaZXP0OBJVa',
       MAILGUN_API_KEY: 'key-099572ee6cd2260a358eeb65b3eeeef8',
       MAILGUN_DOMAIN: 'dav.network',
-      CASSANDRA_ENDPOINTS: 'localhost',
+      CASSANDRA_ENDPOINTS: 'cassandra-0.cassandra.cassandra.svc.cluster.local',
     },
   },
 };
