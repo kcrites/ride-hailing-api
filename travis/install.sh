@@ -5,7 +5,7 @@ if [ ! -d "~/google-cloud-sdk/bin" ]
 then
     rm -rf ~/google-cloud-sdk
     export CLOUDSDK_CORE_DISABLE_PROMPTS=1
-    curl https://sdk.cloud.google.com | bash
+    curl https://sdk.cloud.google.com | bash >/dev/null
 fi
 source ~/google-cloud-sdk/path.bash.inc
 gcloud --quiet version
