@@ -9,7 +9,10 @@ branches:
   - production
 services:
   - docker
-install:
+env:
+  global:
+    - GOOGLE_APPLICATION_CREDENTIALS=~/gcloud-service-key.json
+  install:
   - cd travis && ./install.sh && cd ..
   - cd k8s && npm i && cd ..
   - npm install
