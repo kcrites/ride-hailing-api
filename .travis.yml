@@ -13,9 +13,9 @@ cache:
   directories:
     - "~/google-cloud-sdk/"
 install:
-  - npm install
   - cd travis && ./install.sh && cd ..
   - cd k8s && npm i && cd ..
+  - npm install
 before_script:
 - npm run tslint
 - npm run jest
