@@ -73,5 +73,14 @@ export default class Api {
     this.server.get('/rides',
       // passport.authenticate('jwt', { session: false }),
       ridesController.rides);
+    this.server.get('/driver-has-arrived',
+      // passport.authenticate('jwt', { session: false }),
+      ridesController.driverHasArrived);
+    this.server.get('/start-ride',
+      // passport.authenticate('jwt', { session: false }),
+      ridesController.startRide);
+    this.server.get('/end-ride',
+      // passport.authenticate('jwt', { session: false }),
+      ridesController.endRide);
   }
 }
