@@ -12,7 +12,7 @@ services:
 env:
   global:
     - GOOGLE_APPLICATION_CREDENTIALS=~/gcloud-service-key.json
-  install:
+install:
   - cd travis && ./install.sh && cd ..
   - cd k8s && npm i && cd ..
   - npm install
