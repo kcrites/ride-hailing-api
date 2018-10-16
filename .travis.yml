@@ -1,4 +1,4 @@
-sudo: false
+sudo: required
 language: node_js
 node_js:
 - '9'
@@ -9,9 +9,6 @@ branches:
   - production
 services:
   - docker
-cache:
-  directories:
-    - "~/google-cloud-sdk/"
 install:
   - cd travis && ./install.sh && cd ..
   - cd k8s && npm i && cd ..
