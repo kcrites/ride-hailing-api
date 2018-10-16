@@ -16,7 +16,7 @@ gcloud --quiet components update
 gcloud --quiet components update kubectl
 
 echo $GCLOUD_SERVICE_KEY | base64 --decode -i > ~/gcloud-service-key.json
-cat ~/gcloud-service-key.json
+echo $GCLOUD_SERVICE_KEY
 gcloud auth activate-service-account --key-file ~/gcloud-service-key.json
 
 gcloud --quiet container clusters get-credentials staging --zone us-east1-c --project dav-ride-hailing
